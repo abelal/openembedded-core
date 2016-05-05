@@ -21,6 +21,7 @@ SRC_URI = "ftp://ftp.freedesktop.org/pub/mesa/demos/${PV}/${BPN}-${PV}.tar.bz2 \
     file://0009-glsl-perf-Install-.glsl-.vert-.frag-files.patch \
     file://0010-sharedtex_mt-fix-rendering-thread-hang.patch \
     file://0011-drop-demos-dependant-on-obsolete-MESA_screen_surface.patch \
+    file://0012-only-build-GLX-demos-if-needed.patch \
 "
 SRC_URI[md5sum] = "72613a2c8c013716db02e3ff59d29061"
 SRC_URI[sha256sum] = "e4bfecb5816ddd4b7b37c1bc876b63f1f7f06fda5879221a9774d0952f90ba92"
@@ -30,7 +31,7 @@ inherit autotools pkgconfig distro_features_check
 REQUIRED_DISTRO_FEATURES = "opengl"
 
 PACKAGECONFIG ?= "drm osmesa freetype2 gbm egl gles1 gles2 \
-                  ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'x11 glew glu', '', d)}"
+                  ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'x11 glew glu glx', '', d)}"
 
 # The Wayland code doesn't work with Wayland 1.0, so disable it for now
 #${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'wayland', '', d)}"
@@ -50,6 +51,7 @@ PACKAGECONFIG[wayland] = "--enable-wayland,--disable-wayland,virtual/libgl wayla
 PACKAGECONFIG[x11] = "--enable-x11,--disable-x11,virtual/libx11"
 PACKAGECONFIG[glew] = "--enable-glew,--disable-glew,glew"
 PACKAGECONFIG[glu] = "--enable-glu,--disable-glu,virtual/libgl"
+PACKAGECONFIG[glx] = "--enable-glx-demos,--disable-glx-demos"
 
 do_install_append() {
 	# it can be completely empty when all PACKAGECONFIG options are disabled
